@@ -1,0 +1,1749 @@
+'''
+Mostrar el Histograma de las imagenes
+Junto con sus operaciones usadas en la práctica 2.1
+Ecualizar las imagenes
+Mostrar nuevamente Histograma
+con los colores ecualizados
+'''
+
+import numpy as np
+from matplotlib import pyplot as plt
+import cv2 #Opencv
+import skimage
+from skimage import io
+import math
+
+#Imágenes Iniciales
+img1 = cv2.imread('Ave1.png', 1)
+img2 = cv2.imread('Ave2.png', 1)
+
+#Dimencionamiento en bruto
+Redimg1 = cv2.resize(img1, (300, 300))
+Redimg2 = cv2.resize(img2, (300, 300))
+
+#De matriz BGR a RGB "Genio!!"
+Redimg1 = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2RGB)
+Redimg2 = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2RGB)
+
+# >>>>>>>>>>>>>>>>>>>>>>> 1) Suma <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Suma 1 -------------------------------------------------------------
+suma = cv2.add(Redimg1,Redimg2) #Redimg1+Redimg2
+# plt.subplots(Filas, Columnas)
+# ax -> para las coordenadas
+figurasuma, ax = plt.subplots(3, 4)
+# tamaño del recuadro de graficas imágenes
+figurasuma.set_size_inches(12, 35)
+
+# Forma de impresion de las imágenes y gráficos -> sistema 3x4
+# # Img1   ; HistImg1 ; ImgEc1   ; HistImgEc1;
+# # ImgSum1; HistSum1 ; ImgSum1Ec; ImgSum1Ec ;
+# # Img2   ; HistImg2 ; ImgEc2   ; HistImgEc2;
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(suma)
+ax[1, 0].set_title('Suma 1')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+#ax[0, 1].set_title('H. Imag1 BGR')
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([suma], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+#ax[1, 1].set_title('H. Suma1 BGR')
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+#ax[2, 1].set_title('H. Imag2 BGR')
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgSum1Ec = cv2.cvtColor(suma, cv2.COLOR_BGR2YUV)
+ImgSum1Ec[:, :, 0] = cv2.equalizeHist(ImgSum1Ec[:, :, 0])
+ImgSum1Ec = cv2.cvtColor(ImgSum1Ec, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgSum1Ec)
+ax[1, 2].set_title('Ec. Suma1')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+#ax[0, 3].set_title('H. Imag1 BGR')
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgSum1Ec], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+#ax[1, 3].set_title('H. Suma1 BGR')
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+#ax[2, 3].set_title('H. Imag2 BGR')
+plt.show()
+
+#Suma 2 -------------------------------------------------------------
+
+figurasuma, ax = plt.subplots(3, 4)
+figurasuma.set_size_inches(12, 35)
+
+suma1 = Redimg1+Redimg2
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(suma1)
+ax[1, 0].set_title('Suma 2')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([suma1], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgSum1Ec = cv2.cvtColor(suma1, cv2.COLOR_BGR2YUV)
+ImgSum1Ec[:, :, 0] = cv2.equalizeHist(ImgSum1Ec[:, :, 0])
+ImgSum1Ec = cv2.cvtColor(ImgSum1Ec, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgSum1Ec)
+ax[1, 2].set_title('Ec. Suma2')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgSum1Ec], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+#Suma 3 -------------------------------------------------------------
+figurasuma, ax = plt.subplots(3, 4)
+figurasuma.set_size_inches(12, 35)
+
+suma2 = cv2.addWeighted(Redimg1,0.5,Redimg2,0.5,0)
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(suma2)
+ax[1, 0].set_title('Suma 3')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([suma2], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgSum1Ec = cv2.cvtColor(suma2, cv2.COLOR_BGR2YUV)
+ImgSum1Ec[:, :, 0] = cv2.equalizeHist(ImgSum1Ec[:, :, 0])
+ImgSum1Ec = cv2.cvtColor(ImgSum1Ec, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgSum1Ec)
+ax[1, 2].set_title('Ec. Suma3')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgSum1Ec], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>> 2) Resta <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Resta 1 -------------------------------------------------------------
+figuraresta, ax = plt.subplots(3, 4)
+figuraresta.set_size_inches(12, 35)
+
+resta = cv2.subtract(Redimg1, Redimg2)
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(resta)
+ax[1, 0].set_title('Resta 1')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([resta], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(resta, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Resta1')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+#Resta 2 -------------------------------------------------------------
+figuraresta, ax = plt.subplots(3, 4)
+figuraresta.set_size_inches(12, 35)
+
+resta1 = Redimg1-Redimg2
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(resta1)
+ax[1, 0].set_title('Resta 2')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([resta1], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(resta1, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Resta2')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+#Resta 3 -------------------------------------------------------------
+figuraresta, ax = plt.subplots(3, 4)
+figuraresta.set_size_inches(12, 35)
+
+resta2 = cv2.absdiff(Redimg1, Redimg2)
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(resta2)
+ax[1, 0].set_title('Resta 3')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([resta2], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(resta2, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Resta3')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>> 3) Division <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Division 1 -------------------------------------------------------------
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+division = cv2.divide(Redimg1,Redimg2)
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(division)
+ax[1, 0].set_title('Division')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([division], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(division, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Division')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>> 4) Multiplicacion <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Multiplicacion 1 -------------------------------------------------------------
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+multiplicacion = cv2.multiply(Redimg1,Redimg2)
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(multiplicacion)
+ax[1, 0].set_title('Multiplicacion 1')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([multiplicacion], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(multiplicacion, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Multiplicacion 1')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+#Multiplicacion 2 -------------------------------------------------------------
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+multiplicacion1 = Redimg1*Redimg2
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(multiplicacion1)
+ax[1, 0].set_title('Multiplicacion 2')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([multiplicacion1], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(multiplicacion1, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Multiplicacion 2')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+'''
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 5) Logaritmo <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Logaritmo -------------------------------------------------------------
+logaritmo = np.zeros(Redimg1.shape, Redimg1.dtype)
+c = 1
+logaritmo = c * np.log(1 + Redimg1)
+maxi = np.amax(logaritmo)
+logaritmo = np.uint8(logaritmo / maxi * 255)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(logaritmo)
+ax[1, 0].set_title('Logaritmo')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([logaritmo], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(logaritmo, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Logaritmo')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+'''
+''' 
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 6) Raíz <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Raiz cuadrada -------------------------------------------------------------
+raiz = (Redimg1**(0.5))
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(raiz)
+ax[1, 0].set_title('Raiz')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([raiz], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(raiz, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Raiz')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 7) Derivada <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Derivada -------------------------------------------------------------
+derivada = cv2.Laplacian(Redimg1, cv2.CV_32F)
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(derivada)
+ax[1, 0].set_title('derivada')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([derivada], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(derivada, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. derivada')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+'''
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 8) Potencia <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Potencia -------------------------------------------------------------
+potencia = np.zeros(Redimg1.shape, Redimg1.dtype)
+g = 0.5
+c = 1
+potencia = c * np.power(Redimg1, g)
+maxi1 = np.amax(potencia)
+potencia = np.uint8(potencia / maxi1 * 255)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(potencia)
+ax[1, 0].set_title('potencia')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([potencia], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(potencia, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. potencia')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 9) Conjuncion <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Conjuncion -------------------------------------------------------------
+conjuncion = cv2.bitwise_and(Redimg1, Redimg2)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(conjuncion)
+ax[1, 0].set_title('conjuncion')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([conjuncion], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(conjuncion, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. conjuncion')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 10) Disyuncion <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Disyuncion -------------------------------------------------------------
+disyuncion = cv2.bitwise_or(Redimg1, Redimg2)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(disyuncion)
+ax[1, 0].set_title('disyuncion')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([disyuncion], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(disyuncion, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. disyuncion')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 11) Negacion <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Negacion 1 -------------------------------------------------------------
+negacion1 = Redimg1
+height, width, _ = negacion1.shape
+for i in range(0, height - 1):
+    for j in range(0, width - 1):
+        pixel = negacion1[i, j]
+        pixel[0] = 255 - pixel[0]
+        pixel[1] = 255 - pixel[1]
+        pixel[2] = 255 - pixel[2]
+        negacion1[i, j] = pixel
+Redimg1 = 1 - negacion1     #También queda afectado Redimg1 así que se invierten los colores de nuevo
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(negacion1)
+ax[1, 0].set_title('negacion1')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([negacion1], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(negacion1, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. negacion1')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# Negacion 2 -------------------------------------------------------------
+negacion2 = 1 - Redimg1     #Para la inversa unicamente 1 menos lo que tenga la imagen
+combinado110 = np.concatenate((Redimg1, negacion2, Redimg2), axis=1)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(negacion2)
+ax[1, 0].set_title('negacion2')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([negacion2], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(negacion2, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. negacion2')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 12) Traslación <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Traslacion -------------------------------------------------------------
+ancho   = Redimg1.shape[1] #columnas
+alto    = Redimg1.shape[0] # filas
+# Manipulación de Coordenadas
+M = np.float32([[1,0,60],[0,1,70]])
+#Construccion de la matriz
+trasla = cv2.warpAffine(Redimg1,M,(ancho,alto))
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(trasla)
+ax[1, 0].set_title('trasla')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([trasla], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(trasla, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. trasla')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 14) Rotación <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Rotación 2
+ancho4 = Redimg1.shape[1]  # columnas
+alto4 = Redimg1.shape[0]  # filas
+rota = cv2.getRotationMatrix2D((ancho4 // 2, alto4 // 2), 180, 1)
+rotacion3 = cv2.warpAffine(Redimg1, rota, (ancho4, alto4))
+combinado14 = np.concatenate((Redimg1, rotacion3, Redimg2), axis=1)
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 15) Traslación a fin <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Traslacion a fin (Rotación) -------------------------------------------
+rows, cols, ch = Redimg1.shape
+pts1 = np.float32([[50, 50], [200, 50], [50, 200]])
+pts2 = np.float32([[10, 100], [200, 50], [100, 250]])
+M = cv2.getAffineTransform(pts1, pts2)
+tras = cv2.warpAffine(Redimg1, M, (cols, rows))
+combinado15 = np.concatenate((Redimg1, tras, Redimg2), axis=1)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(tras)
+ax[1, 0].set_title('T. Rotacion')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([tras], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(tras, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. T. Rotacion')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# Traslacion a fin (Perspectivas) -------------------------------------------
+rows1, cols1, ch = Redimg1.shape # Filas, Columnas, Canal = Tamaño de la imagen
+# Esquinas: Sup. Izq; Sup. Der; Inf. Izq; Inf. Der
+pts1 = np.float32([[0, 0], [300, 0], [0, 300],  [300, 300]])
+pts2 = np.float32([[70, 70], [230, 70], [0, 300], [300, 300]])
+M = cv2.getPerspectiveTransform(pts1, pts2)
+persp = cv2.warpPerspective(Redimg1, M, (cols1, rows1))
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(persp)
+ax[1, 0].set_title('Perspectiva')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([persp], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(persp, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Perspectiva')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+'''
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 16) Transpuesta <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#Transpuesta 1 -------------------------------------------------------------
+def transponer(Redimg1):
+    t = []
+    for i in range(len(Redimg1[0])):
+        t.append([])
+        for j in range(len(Redimg1)):
+            t[i].append(Redimg1[j][i])
+    return t
+
+trapr = transponer(Redimg1)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(trapr)
+ax[1, 0].set_title('Transponer 1')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([trapr], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(trapr, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Transponer 1')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+'''
+#Transpuesta 2 -------------------------------------------------------------
+transpuesta1 = cv2.transpose(Redimg1)
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(transpuesta1)
+ax[1, 0].set_title('Transponer 2')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([transpuesta1], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(transpuesta1, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Transponer 2')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>> 17) Proyección <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Proyección -------------------------------------------------------------
+# Es el de Perspectiva + imagen 1
+proyeccion = persp + Redimg1
+
+figura, ax = plt.subplots(3, 4)
+figura.set_size_inches(12, 35)
+
+# Posiciones de las imágenes
+ax[0, 0].imshow(Redimg1)
+ax[0, 0].set_title('Ave 1')
+ax[0, 0].axis('off')
+
+ax[1, 0].imshow(proyeccion)
+ax[1, 0].set_title('Proyección')
+ax[1, 0].axis('off')
+
+ax[2, 0].imshow(Redimg2)
+ax[2, 0].set_title('Ave 2')
+ax[2, 0].axis('off')
+
+# Definir colores para plotear el Histograma
+colors = ('b', 'g', 'r')
+
+# Imprimir todos los Histogramas RGB sin ecualizar
+for i, color in enumerate(colors):
+    hist1 = cv2.calcHist([Redimg1], [i], None, [256], [0, 256])
+    ax[0, 1].plot(hist1, color=color)
+
+for i, color in enumerate(colors):
+    hist2 = cv2.calcHist([proyeccion], [i], None, [256], [0, 256])
+    ax[1, 1].plot(hist2, color=color)
+
+for i, color in enumerate(colors):
+    hist3 = cv2.calcHist([Redimg2], [i], None, [256], [0, 256])
+    ax[2, 1].plot(hist3, color=color)
+
+# Ecualizar imagenes
+Img1Ec = cv2.cvtColor(Redimg1, cv2.COLOR_BGR2YUV)
+Img1Ec[:, :, 0] = cv2.equalizeHist(Img1Ec[:, :, 0])
+Img1Ec = cv2.cvtColor(Img1Ec, cv2.COLOR_YUV2BGR)
+ax[0, 2].imshow(Img1Ec)
+ax[0, 2].set_title('Ec. Ave 1')
+ax[0, 2].axis('off')
+
+ImgresEc = cv2.cvtColor(proyeccion, cv2.COLOR_BGR2YUV)
+ImgresEc[:, :, 0] = cv2.equalizeHist(ImgresEc[:, :, 0])
+ImgresEc = cv2.cvtColor(ImgresEc, cv2.COLOR_YUV2BGR)
+ax[1, 2].imshow(ImgresEc)
+ax[1, 2].set_title('Ec. Proyección')
+ax[1, 2].axis('off')
+
+Img2Ec = cv2.cvtColor(Redimg2, cv2.COLOR_BGR2YUV)
+Img2Ec[:, :, 0] = cv2.equalizeHist(Img2Ec[:, :, 0])
+Img2Ec = cv2.cvtColor(Img2Ec, cv2.COLOR_YUV2BGR)
+ax[2, 2].imshow(Img2Ec)
+ax[2, 2].set_title('Ec. Ave 2')
+ax[2, 2].axis('off')
+
+# Imprimir todos los Histogramas RGB ecualizados
+for i, color in enumerate(colors):
+    ehist1 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[0, 3].plot(ehist1, color=color)
+
+for i, color in enumerate(colors):
+    ehist2 = cv2.calcHist([ImgresEc], [i], None, [256], [0, 256])
+    ax[1, 3].plot(ehist2, color=color)
+
+for i, color in enumerate(colors):
+    ehist3 = cv2.calcHist([Img2Ec], [i], None, [256], [0, 256])
+    ax[2, 3].plot(ehist3, color=color)
+plt.show()
